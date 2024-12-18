@@ -19,19 +19,20 @@
 %define         cni_bin_dir  %{_libexecdir}/cni
 %define         cni_doc_dir  %{_docdir}/cni-plugins
 Name:           cni-plugins
-Version:        1.6.0
-Release:        0
+Version:        1.6.1
+Release:        1
 Summary:        Container Network Interface plugins
 License:        Apache-2.0
 Group:          System/Management
 URL:            https://github.com/containernetworking/plugins
 Source:         %{name}-%{version}.tar.xz
-BuildRequires:  shadow
-BuildRequires:  systemd-rpm-macros
+BuildRequires:  shadow-utils
+BuildRequires:  pkgconfig(systemd)
 BuildRequires:  xz
-BuildRequires:  golang(API) >= 1.21
+#BuildRequires:  golang(API) >= 1.21
+BuildRequires:  golang(API) >= 1.23
 Requires:       cni
-Requires(post): %fillup_prereq
+#Requires(post): %%fillup_prereq
 %{?systemd_requires}
 
 %description
@@ -47,7 +48,7 @@ These are the additional CNI network plugins provided by
 the containernetworking team.
 
 %prep
-%setup -q
+%autosetup -n %{name}-%{version}/plugins
 
 %build
 %ifnarch ppc64
@@ -64,13 +65,8 @@ cp bin/* "%{buildroot}%{cni_bin_dir}/"
 # documentation
 install -m 755 -d "%{buildroot}%{cni_doc_dir}"
 
-# TODO: copy the READMEs
-#for i in plugins/main/*/README.md ; do
-#      cp Documentation/* %%{buildroot}%%{cni_doc_dir}/plugins/
-#done
-
-%post
-%{fillup_only -n %{name}}
+#%%post
+#%%{fillup_only -n %%{name}}
 
 %files
 %dir %{cni_doc_dir}
@@ -79,4 +75,3 @@ install -m 755 -d "%{buildroot}%{cni_doc_dir}"
 %license LICENSE
 %dir %{cni_bin_dir}
 %{cni_bin_dir}/*
-# %%{cni_doc_dir}/plugins/*
