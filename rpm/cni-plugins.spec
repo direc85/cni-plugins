@@ -54,6 +54,16 @@ the containernetworking team.
 %ifnarch ppc64
 export GOFLAGS="-buildmode=pie"
 %endif
+
+export GOTMPDIR=${TMPDIR:-$(realpath .)}/.tmp-go
+mkdir -p $GOTMPDIR
+
+export GOCACHE=${TMPDIR:-$(realpath .)}/.tmp-gocache
+mkdir -p $GOCACHE
+
+export TMPDIR=${TMPDIR:-$(realpath .)}/.tmp
+mkdir -p $TMPDIR
+
 ./build_linux.sh
 
 %install
